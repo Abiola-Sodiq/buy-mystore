@@ -6,6 +6,7 @@ import { formConfig } from "../../utils/helper";
 
 type Props = {
   amount: number;
+  onClose: () => void;
 };
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
   }
 }
 
-const PayModal = ({ amount }: Props) => {
+const PayModal = ({ amount, onClose }: Props) => {
   const [form] = Form.useForm();
   const [openModal, setOpenModal] = useState<boolean>(true);
 
@@ -41,7 +42,10 @@ const PayModal = ({ amount }: Props) => {
   return (
     <Modal
       open={openModal}
-      onCancel={() => setOpenModal(false)}
+      onCancel={() => {
+        setOpenModal(false);
+        onClose(); 
+      }}
       footer={null}
       className="p-6 space-y-4"
     >
@@ -62,7 +66,7 @@ const PayModal = ({ amount }: Props) => {
       >
         <Form.Item
           label={
-            <span className="text-base font-normal text-[#333333] mt-6">
+            <span className="text-base font-semibold text-[#333333] mt-6 ">
               Please Enter E-mail Address to proceed with payment
             </span>
           }
@@ -93,7 +97,7 @@ const PayModal = ({ amount }: Props) => {
         <Button
           type="primary"
           htmlType="submit"
-          className="w-full border border-[#E3E6EA] py-6 bg-stone-600 text-white rounded-xl text-lg hover:bg-stone-700"
+          className=" w-full py-6 bg-stone-600 !text-white rounded-xl text-lg  flex justify-center items-center"
         >
           Proceed to Pay
         </Button>

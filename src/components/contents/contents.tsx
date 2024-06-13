@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import PayModal from "../../pages/Paymodal/PayModal";
 type Product = {
@@ -23,11 +23,14 @@ const ProductList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<number>();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [price, setPrice] = useState<number>(0);
+  const closeModal = () => {
+    setOpenModal(false);
+  };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://fakestoreapi.com/products");
+      const response = await fetch(import.meta.env.VITE_APP_BASE_URL);
       if (!response.ok) {
         throw new Error("Error");
       }
@@ -37,7 +40,7 @@ const ProductList: React.FC = () => {
     } catch (error: any) {
       setError(error.message);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -58,16 +61,19 @@ const ProductList: React.FC = () => {
   }
 
   return (
-    <div className=" w-full bg-slate-400 px-6 pb-5">
-      {openModal && <PayModal amount={price} />}
-      <ul className="flex items-center flex-wrap w-full justify-between">
+    <div className=" w-full bg-slate-400 px-6 pb-5 ">
+      {openModal && <PayModal amount={price} onClose={closeModal} />}
+      <ul className="flex items-center flex-wrap w-full justify-center sm:justify-between">
         {products.map((product) => (
           <li
             key={product.id}
             className="bg-white shadow-md rounded-xl h-[25rem] w-[20rem] overflow-auto mt-6 p-4 relative cursor-pointer "
-            onClick={() => {
-              setShowDescription(!showDescription);
+            onMouseEnter={() => {
+              setShowDescription(true);
               setSelectedItem(product.id);
+            }}
+            onMouseLeave={() => {
+              setShowDescription(false);
             }}
           >
             <motion.div
@@ -79,9 +85,9 @@ const ProductList: React.FC = () => {
                 selectedItem === product.id && showDescription
                   ? "block"
                   : "hidden"
-              } absolute top-1 bg-[#dad9d9d3] left-5 right-5 h-[90%] flex justify-center items-center flex-col z-[100]`}
+              } absolute top-1 bg-[#dad9d9d3] left-5 right-5 h-[90%] flex justify-center items-center flex-col z-[100] overflow-auto p-4`}
             >
-              <p className="text-sm text-black w-full text-center">
+              <p className="text-sm text-black w-full text-justify ">
                 {product.description}
               </p>
               <span className=" flex justify-center items-center">
